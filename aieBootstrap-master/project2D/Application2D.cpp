@@ -15,12 +15,13 @@ Application2D::~Application2D() {
 
 bool Application2D::startup() {
 	
+
 	m_2dRenderer = new aie::Renderer2D();
 
-	m_texture = new aie::Texture("./textures/numbered_grid.tga");
-	m_shipTexture = new aie::Texture("./textures/ship.png");
+	m_texture = new aie::Texture("../bin/textures/numbered_grid.tga");
+	m_shipTexture = new aie::Texture("../bin/textures/ship.png");
 
-	m_font = new aie::Font("./font/consolas.ttf", 32);
+	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
 	
 	m_timer = 0;
 
