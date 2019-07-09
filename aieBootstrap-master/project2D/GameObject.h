@@ -12,8 +12,10 @@ public:
 	GameObject* parent_pointer = nullptr;
 	matrix_3x3 world_transform;
 	matrix_3x3 local_transform;
+	matrix_3x3 obj_scale;
 	Texture* texture_pointer;
 
+	void Rotate(GameObject a_gameobject);
 	void Update();
 	void Draw(Renderer2D* a_renderer);
 

@@ -17,28 +17,57 @@ bool Application2D::startup() {
 	
 
 	m_2dRenderer = new aie::Renderer2D();
-
-	m_texture = new aie::Texture("../bin/textures/numbered_grid.tga");
-	m_shipTexture = new aie::Texture("../bin/textures/ship.png");
+	m_sun_texture = new aie::Texture("../bin/textures/ShitSun.png");
+	m_earth_texture = new aie::Texture("../bin/textures/Earth.png");
+	m_moon_texture = new aie::Texture("../bin/textures/Moon.png");
 
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
-	
 	m_timer = 0;
+	m_sun.texture_pointer = m_sun_texture;
+	m_earth.texture_pointer = m_earth_texture;
+	m_moon.texture_pointer = m_moon_texture;
+
+	m_earth.parent_pointer = &m_sun;
+	m_moon.parent_pointer = &m_earth;
+
+	m_sun.local_transform.axes[2] = { 640, 360, 1 };
+	
+	m_earth.local_transform.axes[2] = { 350, 0, 1 }; 
+	// setting scale of earth
+	m_earth.obj_scale._2d[0][0] = 0.5f;
+	m_earth.obj_scale._2d[1][1] = 0.5f;
+
+	m_moon.local_transform.axes[2] = { 300, 0, 1 };
+	// setting scale of moon
+	m_moon.obj_scale._2d[0][0] = 0.5f;
+	m_moon.obj_scale._2d[1][1] = 0.5f;
 
 	return true;
 }
 
-void Application2D::shutdown() {
-	
+void Application2D::shutdown()
+{
+	delete m_sun_texture;
+	delete m_earth_texture;
 	delete m_font;
-	delete m_texture;
-	delete m_shipTexture;
 	delete m_2dRenderer;
 }
 
 void Application2D::update(float deltaTime) {
 
 	m_timer += deltaTime;
+
+	m_sun.Update();
+	m_earth.Update();
+	m_moon.Update();
+
+	m_sun.local_transform.setRotateZ(m_timer * 0.5);
+
+	m_earth.local_transform.setRotateZ(m_timer * 2);
+	// setting scale for the earth
+
+	m_moon.local_transform.setRotateZ(m_timer * 10);
+	// setting scale for the moon
 
 	// input example
 	aie::Input* input = aie::Input::getInstance();
@@ -75,28 +104,11 @@ void Application2D::draw() {
 	// begin drawing sprites
 	m_2dRenderer->begin();
 
-	// demonstrate animation
-	m_2dRenderer->setUVRect(int(m_timer) % 8 / 8.0f, 0, 1.f / 8, 1.f / 8);
-	m_2dRenderer->drawSprite(m_texture, 200, 200, 100, 100);
-
 	// demonstrate spinning sprite
-	m_2dRenderer->setUVRect(0,0,1,1);
-	m_2dRenderer->drawSprite(m_shipTexture, 600, 400, 0, 0, m_timer * 20, 1);
-
-	// draw a thin line
-	m_2dRenderer->drawLine(300, 300, 600, 400, 2, 1);
-
-	// draw a moving purple circle
-	m_2dRenderer->setRenderColour(1, 0, 1, 1);
-	m_2dRenderer->drawCircle(sin(m_timer) * 100 + 600, 150, 50);
-
-	// draw a rotating red box
-	m_2dRenderer->setRenderColour(1, 0, 0, 1);
-	m_2dRenderer->drawBox(600, 500, 60, 20, m_timer);
-
-	// draw a slightly rotated sprite with no texture, coloured yellow
-	m_2dRenderer->setRenderColour(1, 1, 0, 1);
-	m_2dRenderer->drawSprite(nullptr, 400, 400, 50, 50, 3.14159f * 0.25f, 1);
+	//m_2dRenderer->drawSprite(m_sun_texture, 256, 256, 0, 0, m_timer * 5, 1);
+	m_sun.Draw(m_2dRenderer);
+	m_earth.Draw(m_2dRenderer);
+	m_moon.Draw(m_2dRenderer);
 	
 	// output some text, uses the last used colour
 	char fps[32];
